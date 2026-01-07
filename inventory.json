@@ -1,0 +1,5 @@
+[
+  {"name": "Hammer", "rack": "B", "available": true},
+  {"name": "Screwdriver", "rack": "A", "available": true},
+  {"name": "Drill", "rack": "C", "available": false}
+]
