@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inventory Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="header">
+  <img src="pricol_logo.png.jpg" class="logo">
+  <h2 class="title">Inventory Admin Panel</h2>
+</div>
+
+<input type="password" id="pin" placeholder="Enter Admin PIN">
+<button onclick="login()">Login</button>
+
+<div id="adminPanel" style="display:none">
+
+  <button onclick="logout()" class="logoutBtn">Logout</button>
+
+  <h3 class="title">Add / Update Item</h3>
+
+  <input id="itemName" placeholder="Item Name">
+
+  <select id="rackSelect">
+    <option value="A">Rack A</option>
+    <option value="B">Rack B</option>
+    <option value="C">Rack C</option>
+  </select>
+
+  <select id="statusSelect">
+    <option value="true">Available</option>
+    <option value="false">Not Available</option>
+  </select>
+
+  <button onclick="addItem()">Add / Update</button>
+  <p id="adminMsg" class="adminStatus"></p>
+
+  <h3 class="title">Remove Item</h3>
+  <select id="removeSelect"></select>
+  <button onclick="removeItem()">Remove Item</button>
+  <p id="removeMsg" class="adminStatus"></p>
+
+</div>
+
+<!-- 🔥 Firebase FIRST -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script src="firebase.js"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>
