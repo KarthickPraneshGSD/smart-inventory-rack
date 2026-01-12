@@ -8,10 +8,11 @@ const firebaseConfig = {
   appId: "1:1081356245240:web:80173a12a979bb6ce2030d"
 };
 
-// Initialize Firebase
+// Initialize Firebase (COMPAT MODE)
 firebase.initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = firebase.firestore();
 
-console.log("🔥 Firebase initialized", db);
+// Debug check
+console.log("Firebase connected", db);
