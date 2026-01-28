@@ -6,9 +6,9 @@ const indicator = document.getElementById("rackIndicator");
 
 let inventoryMap = {};
 
-/* ===============================
+/* ==================================
    REAL-TIME INVENTORY FROM FIRESTORE
-================================ */
+================================== */
 db.collection("items").onSnapshot(snapshot => {
   itemSelect.innerHTML = "";
   inventoryMap = {};
@@ -26,22 +26,22 @@ db.collection("items").onSnapshot(snapshot => {
   console.log("🔄 Inventory synced");
 });
 
-/* ===============================
-   SEND RACK TO ESP32 (CONTROL DOC)
-================================ */
+/* ==================================
+   SEND RACK COMMAND TO ESP32
+================================== */
 function updateActiveRack(rack) {
   db.collection("control").doc("activeRack").set({
     rack: rack
   }).then(() => {
-    console.log("💡 Active rack sent:", rack);
+    console.log("💡 Rack command sent:", rack);
   }).catch(err => {
     console.error("❌ Firestore write failed", err);
   });
 }
 
-/* ===============================
+/* ==================================
    USER ACTION: FIND ITEM
-================================ */
+================================== */
 function findItem() {
   const name = itemSelect.value;
   const item = inventoryMap[name];
@@ -60,19 +60,18 @@ function findItem() {
       item.rack === "B" ? "green" :
       item.rack === "C" ? "blue" : "gray";
 
-    // 🔥 THIS TRIGGERS ESP32 LED
+    // 🔥 Trigger ESP32 LED ON
     updateActiveRack(item.rack);
 
- } else {
-  statusText.textContent = "Item not available";
-  indicator.style.background = "yellow";
+  } else {
+    statusText.textContent = "Item not available";
+    indicator.style.background = "yellow";
 
-  // 🔥 tell ESP32 to blink all LEDs
-  updateActiveRack("NA");
+    // 🔥 Trigger ESP32 BLINK
+    updateActiveRack("NA");
 
-  setTimeout(() => {
-    indicator.style.background = "gray";
-  }, 800);
+    setTimeout(() => {
+      indicator.style.background = "gray";
+    }, 800);
+  }
 }
-
-
