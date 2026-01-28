@@ -6,7 +6,9 @@ const indicator = document.getElementById("rackIndicator");
 
 let inventoryMap = {};
 
-// 🔥 REAL-TIME FIRESTORE LISTENER
+/* ================================
+   REAL-TIME INVENTORY SYNC
+================================ */
 db.collection("items").onSnapshot(snapshot => {
   itemSelect.innerHTML = "";
   inventoryMap = {};
@@ -21,10 +23,25 @@ db.collection("items").onSnapshot(snapshot => {
     itemSelect.appendChild(option);
   });
 
-  console.log("🔄 Inventory synced to user page");
+  console.log("🔄 Inventory synced");
 });
 
-// FIND ITEM
+/* ================================
+   UPDATE ACTIVE RACK (ESP32)
+================================ */
+function updateActiveRack(rack) {
+  db.collection("control").doc("activeRack").set({
+    rack: rack
+  }).then(() => {
+    console.log("💡 Active rack updated:", rack);
+  }).catch(err => {
+    console.error("❌ Firestore write failed", err);
+  });
+}
+
+/* ================================
+   FIND ITEM (USER ACTION)
+================================ */
 function findItem() {
   const name = itemSelect.value;
   const item = inventoryMap[name];
@@ -36,29 +53,22 @@ function findItem() {
   }
 
   if (item.available) {
-  statusText.textContent = `Item available in Rack ${item.rack}`;
+    statusText.textContent = `Item available in Rack ${item.rack}`;
 
-  indicator.style.background =
-    item.rack === "A" ? "red" :
-    item.rack === "B" ? "green" : "blue";
+    indicator.style.background =
+      item.rack === "A" ? "red" :
+      item.rack === "B" ? "green" :
+      item.rack === "C" ? "blue" : "gray";
 
-  // 🔥 SEND RACK TO ESP32
-  updateActiveRack(item.rack);
-} else {
+    // 🔥 SEND RACK TO ESP32
+    updateActiveRack(item.rack);
+
+  } else {
     statusText.textContent = "Item not available";
     indicator.style.background = "yellow";
 
     setTimeout(() => {
       indicator.style.background = "gray";
-    }, 500);
+    }, 800);
   }
-}
-function updateActiveRack(rack) {
-  db.collection("control").doc("activeRack").set({
-    rack: rack
-  }).then(() => {
-    console.log("💡 Active rack sent to ESP32:", rack);
-  }).catch(err => {
-    console.error("❌ Failed to update active rack", err);
-  });
 }
