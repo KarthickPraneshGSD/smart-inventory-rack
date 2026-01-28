@@ -36,12 +36,15 @@ function findItem() {
   }
 
   if (item.available) {
-    statusText.textContent = `Item available in Rack ${item.rack}`;
+  statusText.textContent = `Item available in Rack ${item.rack}`;
 
-    indicator.style.background =
-      item.rack === "A" ? "red" :
-      item.rack === "B" ? "green" : "blue";
-  } else {
+  indicator.style.background =
+    item.rack === "A" ? "red" :
+    item.rack === "B" ? "green" : "blue";
+
+  // 🔥 SEND RACK TO ESP32
+  updateActiveRack(item.rack);
+} else {
     statusText.textContent = "Item not available";
     indicator.style.background = "yellow";
 
@@ -49,4 +52,13 @@ function findItem() {
       indicator.style.background = "gray";
     }, 500);
   }
+}
+function updateActiveRack(rack) {
+  db.collection("control").doc("activeRack").set({
+    rack: rack
+  }).then(() => {
+    console.log("💡 Active rack sent to ESP32:", rack);
+  }).catch(err => {
+    console.error("❌ Failed to update active rack", err);
+  });
 }
