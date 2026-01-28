@@ -1,74 +1,31 @@
-console.log("✅ user.js loaded");
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Inventory - User</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-const itemSelect = document.getElementById("itemSelect");
-const statusText = document.getElementById("status");
-const indicator = document.getElementById("rackIndicator");
+<body>
 
-let inventoryMap = {};
+<div class="header">
+  <img src="pricol_logo.png.jpg" class="logo">
+  <h2 class="title">Smart Inventory Rack System</h2>
+</div>
 
-/* ================================
-   REAL-TIME INVENTORY SYNC
-================================ */
-db.collection("items").onSnapshot(snapshot => {
-  itemSelect.innerHTML = "";
-  inventoryMap = {};
+<select id="itemSelect"></select>
+<button onclick="findItem()">Find Item</button>
 
-  snapshot.forEach(doc => {
-    const item = doc.data();
-    inventoryMap[item.name] = item;
+<p id="status" class="statusText"></p>
+<div id="rackIndicator" class="indicator"></div>
 
-    const option = document.createElement("option");
-    option.value = item.name;
-    option.textContent = item.name;
-    itemSelect.appendChild(option);
-  });
+<a href="admin.html" class="adminLink">Admin Login</a>
 
-  console.log("🔄 Inventory synced");
-});
+<!-- 🔥 Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-/* ================================
-   UPDATE ACTIVE RACK (ESP32)
-================================ */
-function updateActiveRack(rack) {
-  db.collection("control").doc("activeRack").set({
-    rack: rack
-  }).then(() => {
-    console.log("💡 Active rack updated:", rack);
-  }).catch(err => {
-    console.error("❌ Firestore write failed", err);
-  });
-}
+<script src="firebase.js"></script>
+<script src="user.js"></script>
 
-/* ================================
-   FIND ITEM (USER ACTION)
-================================ */
-function findItem() {
-  const name = itemSelect.value;
-  const item = inventoryMap[name];
-
-  if (!item) {
-    statusText.textContent = "Item not found";
-    indicator.style.background = "gray";
-    return;
-  }
-
-  if (item.available) {
-    statusText.textContent = `Item available in Rack ${item.rack}`;
-
-    indicator.style.background =
-      item.rack === "A" ? "red" :
-      item.rack === "B" ? "green" :
-      item.rack === "C" ? "blue" : "gray";
-
-    // 🔥 SEND RACK TO ESP32
-    updateActiveRack(item.rack);
-
-  } else {
-    statusText.textContent = "Item not available";
-    indicator.style.background = "yellow";
-
-    setTimeout(() => {
-      indicator.style.background = "gray";
-    }, 800);
-  }
-}
+</body>
+</html>
