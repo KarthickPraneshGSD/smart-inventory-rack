@@ -63,12 +63,16 @@ function findItem() {
     // 🔥 THIS TRIGGERS ESP32 LED
     updateActiveRack(item.rack);
 
-  } else {
-    statusText.textContent = "Item not available";
-    indicator.style.background = "yellow";
+ } else {
+  statusText.textContent = "Item not available";
+  indicator.style.background = "yellow";
 
-    setTimeout(() => {
-      indicator.style.background = "gray";
-    }, 800);
-  }
+  // 🔥 tell ESP32 to blink all LEDs
+  updateActiveRack("NA");
+
+  setTimeout(() => {
+    indicator.style.background = "gray";
+  }, 800);
 }
+
+
